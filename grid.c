@@ -39,7 +39,7 @@ typedef struct _Board {
     struct _Tile* root; //quadrado A1
 } board;
 
-//construtor para os 144 quadrados
+//boa sorte decifrando esse daqui
 board* newBoard(){
     board* _b = malloc(sizeof(board));
     _b->root = newTile(); //A1
