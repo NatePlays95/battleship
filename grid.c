@@ -93,19 +93,39 @@ board* newBoard(){
         for(int x = 1; x <= 12; x++){ //cria uma fila no Y atual
             //printf("(%d-%d) ", x, y);
             currentX->right = newTile();
-            currentX->right->left = currentX;
+            currentX->right->left = currentX; //conecta todas as fileiras horizontalmente
 
             currentX = currentX->right;
         }
         //printf("\n");
         currentY->down = newTile();
-        currentY->down->up = currentY;
+        currentY->down->up = currentY; //conecta a coluna A verticalmente
 
         currentY = currentY->down;
     }
     //note que, fora os tiles em A, os outros tiles 
     //não estão conectados verticalmente (ponteiros up e down)
-    //TODO: conectar os tiles.
+    //agora, conectar todos os tiles.
+    tile* upperY = _b->root;
+    tile* lowerY = _b->root->down;
+
+    for(int y = 1; y < 12; y++){
+        //dessa vez até 11, pois estamos checando y e y+1
+
+        tile* upperX = upperY;
+        tile* lowerX = lowerY;
+        for(int x = 1; x <= 12; x++){
+            upperX->down = lowerX;
+            lowerX->up = upperX;
+
+            upperX = upperX->right;
+            lowerX = lowerX->right;
+        }
+
+        lowerY = lowerY->down;
+        upperY = upperY->down;
+    }
+    //agora todos os tiles devem estar conectados.
 
     return _b;
 }
