@@ -18,21 +18,41 @@ game* newGame(){
     return _g;
 }
 
+
+
 void printBoards(game* _game){
     printf("      Humano         Computador  \n");
     printf("   ABCDEFGHIJKL     ABCDEFGHIJKL \n");
     printf("  +------------+   +------------+\n");
-    printf(" 1|            |  1|            |\n");
-    printf(" 2|            |  2|            |\n");
-    printf(" 3|            |  3|            |\n");
-    printf(" 4|            |  4|            |\n");
-    printf(" 5|            |  5|            |\n");
-    printf(" 6|            |  6|            |\n");
-    printf(" 7|            |  7|            |\n");
-    printf(" 8|            |  8|            |\n");
-    printf(" 9|            |  9|            |\n");
-    printf("10|            | 10|            |\n");
-    printf("11|            | 11|            |\n");
-    printf("12|            | 12|            |\n");
+    
+    //template da fileira: printf(" 1|            |  1|            |\n");
+    //printar cada fileira
+    for(int f = 1; f <= 12; f++){
+        //separador
+        if (f < 10) printf(" "); printf("%d|", f); //" 1|"
+
+        //lado humano
+        tile* current = BoardGetTileAt(_game->playerboard, 1, f);
+        for(int x = 1; x <= 12; x++){
+            printf("%c", tilePrintDataPlayer(current));
+            current = current->right;
+        }
+        
+        //separador
+        printf("|"); if (f < 10) printf(" "); printf("%d|", f); //"| 1|"
+
+        //lado computador
+        current = BoardGetTileAt(_game->aiboard, 1, f);
+        for(int x = 1; x <= 12; x++){
+            printf("%c", tilePrintDataAi(current));
+            current = current->right;
+        }
+
+        printf("|\n");
+    }
+    
+
+    
+    
     printf("  +------------+   +------------+\n");
 }

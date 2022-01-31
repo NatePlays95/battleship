@@ -23,9 +23,7 @@ tile* newTile(){
 void tileChangeData(tile* _tile, char _data){
     _tile->data = _data;
 }
-char tilePrintPlayer(tile* _tile){
-    char _c = ' ';
-}
+
 
 //problema 1:
 //
@@ -40,12 +38,13 @@ char tilePrintPlayer(tile* _tile){
 //ao escolher C3, como saber quais
 //partes pertencem ao mesmo navio?
 
-bool tileCheckNeighbors(tile* _t, int _dir){
+bool tileCheckShip(tile* _t, int _dir){
     //função retorna verdadeiro se encontrou uma ponta de embarcação valida
     //por exemplo, achar uma ponta (v) indo para a direita indica que
     //provavelmente não é da mesma embarcação.
     //no entanto, achar uma ponta (v) indo para baixo só pode ser da
     //mesma embarcação.
+    //serve para achar em qual direção a embarcação está
     
     //direções são: 
     // 0 = baixo para cima (^), 1 = esquerda para a direita (>), 
@@ -77,7 +76,143 @@ bool tileCheckNeighbors(tile* _t, int _dir){
     //retornar falso
     else return false;
 }
+bool tileCheckShipHit(tile* _t, int _dir){
+    //checar se a embarcação atual foi completamente afundada.
+    //verdadeiro se todas as partes até uma ponta foram atingidas.
+    //falso se qualquer parte no caminho não foi atingida
 
+    //direção funciona igual a função anterior
+
+    if(_t == NULL) return false;
+    if(_t->sunk) return false; //não pertence ao mesmo barco
+
+    if(!_t->hit){
+        return false;
+    } else {
+        //se vindo de baixo para cima, e encontrou um final ^, retornar verdadeiro
+        if(_dir == 0 && _t->data == '^') return true;
+        //se vindo de cima para baixo, e encontrou um final v, retornar verdadeiro
+        else if(_dir == 2 && _t->data == 'v') return true;
+        //se vindo da esquerda para a direita, e encontrou um final >, retornar verdadeiro
+        else if(_dir == 1 && _t->data == '>') return true;
+        //se vindo da direita para a esquerda, e encontrou um final <, retornar verdadeiro
+        else if(_dir == 3 && _t->data == '<') return true;
+        
+        else if (_t->data == '#'){
+            if(_dir == 0) return tileCheckNeighbors(_t->up, _dir);
+            else if(_dir == 1) return tileCheckNeighbors(_t->right, _dir);
+            else if(_dir == 2) return tileCheckNeighbors(_t->down, _dir);
+            else if(_dir == 3) return tileCheckNeighbors(_t->left, _dir);
+        } else return false;
+    }
+}
+void tileSinkShip(tile* _t, int _dir){
+    // (0 = ^)      (1 = >)      (2 = v)      (3 = <)
+    if(_t == NULL) return;
+    if(!_t->sunk){
+        if (_t->data == '&' || _t->data == '@'){
+            _t->sunk = true;
+            return;
+        } 
+        
+        else if (_t->data == '#'){
+            _t->sunk = true;
+            if(_dir == 0) return tileSinkShip(_t->up, _dir);
+            else if(_dir == 1) return tileSinkShip(_t->right, _dir);
+            else if(_dir == 2) return tileSinkShip(_t->down, _dir);
+            else if(_dir == 3) return tileSinkShip(_t->left, _dir);
+        }
+        
+        else if(_dir == 0 && _t->data == '^') _t->sunk = true;
+        else if(_dir == 2 && _t->data == 'v') _t->sunk = true;
+        else if(_dir == 1 && _t->data == '>') _t->sunk = true;
+        else if(_dir == 3 && _t->data == '<') _t->sunk = true;
+    }
+}
+
+//função para quando se atira num quadrado do tabuleiro.
+void hitTile(tile* _t){
+    _t->hit = true;
+    char _d = _t->data; 
+
+    //agua, jangadas e submarinos são simples
+    if (_d == ' ') return;
+    else if (_d == '@' || _d == '&'){
+        tileSinkShip(_t, 0);  return;
+    }
+
+    // (0 = ^)      (1 = >)      (2 = v)      (3 = <)
+    else if (_d == 'v') {
+        if (tileCheckShipHit(_t, 0) == true){
+            tileSinkShip(_t->up, 0); 
+            return ;
+        }   
+    }
+    else if (_d == '<') {
+        if (tileCheckShipHit(_t, 1)){
+            tileSinkShip(_t->right, 1); 
+            return;
+        }
+    }
+    else if (_d == '^') {
+        if (tileCheckShipHit(_t, 2)){
+            tileSinkShip(_t->down, 2); 
+            return;
+        }
+    }
+    else if (_d == '>') {
+        if (tileCheckShipHit(_t, 3)){
+            tileSinkShip(_t->left, 3); 
+            return;
+        }
+    }
+    
+
+    else if (_d == '#'){ //desambiguar a direção
+        int _orientation = 0; //1 para horizontal, 2 para vertical.
+        
+        //teste horizontal
+        if (tileCheckShip(_t, 1) && tileCheckShip(_t, 3)) _orientation = 1;
+        //teste vertical
+        if (tileCheckShip(_t, 0) && tileCheckShip(_t, 2)) _orientation = 2;
+
+        if (_orientation == 1){
+            if (tileCheckShipHit(_t, 1) && tileCheckShipHit(_t, 3)){
+                tileSinkShip(_t->left, 3); tileSinkShip(_t->right, 1);
+            }
+        } else if (_orientation == 2) {
+            if (tileCheckShipHit(_t, 0) && tileCheckShipHit(_t, 2)){
+                tileSinkShip(_t->up, 0); tileSinkShip(_t->down, 2);
+            }
+        }
+        return;
+    }
+    
+
+}
+
+//funções pra escolher o que mostrar no display
+char* tilePrintDataPlayer(tile* _t){
+    if (_t->data == ' '){ //água, atingida ou não
+        if (_t->hit) { return 'O'; } else return ' ';
+    } 
+    else if (_t->hit) { //navios derrubados são atingidos tambem
+        return '*';
+    }
+    else return _t->data;
+}
+char* tilePrintDataAi(tile* _t){
+    if (_t->data == ' '){ //água, atingida ou não
+        if (_t->hit) { return 'O'; } else return ' ';
+    } 
+    else if (_t->sunk) { //navios derrubados são revelados
+        return _t->data;
+    }
+    else if (_t->hit){ //navios atingidos são marcados com '*'
+        return '*';
+    }
+    else return ' '; //outros tiles são escondidos.
+}
 
 //  BOARD
 
