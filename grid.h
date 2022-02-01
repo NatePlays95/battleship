@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 //  TILE
 //tile representa cada quadrado do mapa 
@@ -41,5 +42,6 @@ typedef struct _Board {
 board* newBoard();
 
 tile* BoardGetTileAt(board* _board, int _x, int _y);
+void BoardRandomPopulate(board * _board);
 
 #endif

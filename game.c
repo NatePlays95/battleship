@@ -47,12 +47,18 @@ void printBoards(game* _game){
             printf("%c", tilePrintDataAi(current));
             current = current->right;
         }
-
         printf("|\n");
     }
-    
-
-    
-    
     printf("  +------------+   +------------+\n");
+}
+
+int main(){
+    game* g = newGame();
+    
+    //debug
+    BoardRandomPopulate(g->playerboard);
+    printBoards(g);
+    //debug
+
+    return EXIT_SUCCESS;
 }

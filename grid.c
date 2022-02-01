@@ -2,7 +2,6 @@
 #include "grid.h"
 
 //  TILE
-
 //constructor
 tile* newTile(){
     tile* _t = malloc(sizeof(tile));
@@ -23,7 +22,6 @@ tile* newTile(){
 void tileChangeData(tile* _tile, char _data){
     _tile->data = _data;
 }
-
 
 //problema 1:
 //
@@ -214,8 +212,9 @@ char* tilePrintDataAi(tile* _t){
     else return ' '; //outros tiles são escondidos.
 }
 
-//  BOARD
 
+
+//  BOARD
 board* newBoard(){
     //cria um board, e preenche com 12x12 tiles a partir de A1.
     board* _b = malloc(sizeof(board));
@@ -281,4 +280,16 @@ tile* BoardGetTileAt(board* _board, int _x, int _y){
     }
     
     return current;
+}
+
+void BoardRandomPopulate(board * _board){
+    srand(time(NULL));
+    for(int i = 0; i < 10; i++){
+        
+        tile* t = BoardGetTileAt(_board,1+(rand()/12),1+(rand()/12));
+        t->data = '#';
+        tile* t = BoardGetTileAt(_board,1+(rand()/12),1+(rand()/12));
+        t->data = 'v';
+
+    }
 }
