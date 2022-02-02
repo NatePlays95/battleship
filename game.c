@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "grid.h"
+#include "interface.h"
 
 //  GAME MANAGER
 //salva os tabuleiros e turnos.
@@ -17,8 +18,6 @@ game* newGame(){
     _g->aiboard = newBoard();
     return _g;
 }
-
-
 
 void printBoards(game* _game){
     printf("      Humano         Computador  \n");
@@ -52,16 +51,16 @@ void printBoards(game* _game){
     printf("  +------------+   +------------+\n");
 }
 
+
+//para testes
 int main(){
-    printf("-0\n");
     game* g = newGame();
-    printBoards(g);
-    printf("-a\n");
     //debug
-    BoardRandomPopulate(g->playerboard);
-    printf("-b\n");
+    BoardRandomPopulate(g->aiboard);
     printBoards(g);
-    printf("-c\n");
+
+    posicionando_Embarcacoes(g->playerboard);
+    printBoards(g);
     //debug
 
     return EXIT_SUCCESS;

@@ -1,6 +1,6 @@
 #ifndef HEADER_GRID
 #define HEADER_GRID
-//include once
+//incluir uma vez
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -44,5 +44,11 @@ board* newBoard();
 
 tile* BoardGetTileAt(board* _board, int _x, int _y);
 void BoardRandomPopulate(board * _board);
+
+bool BoardPlaceBoat(board* _board, int _x, int _y);
+bool BoardPlaceSubmarine(board* _board, int _x, int _y);
+bool BoardPlaceShip(board* _board, int _x, int _y, char _ori);
+bool BoardPlaceDestroyer(board* _board, int _x, int _y, char _ori);
+bool BoardPlaceCarrier(board* _board, int _x, int _y, char _ori);
 
 #endif
