@@ -3,6 +3,7 @@
 //include once
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
 
@@ -30,8 +31,8 @@ void tileSinkShip(tile* _t, int _dir);
 
 void hitTile(tile* _t);
 
-char* tilePrintDataPlayer(tile* _t);
-char* tilePrintDataAi(tile* _t);
+char tilePrintDataPlayer(tile* _t);
+char tilePrintDataAi(tile* _t);
 
 //  BOARD
 //board é o tabuleiro, conjunto de tiles

@@ -39,7 +39,7 @@ void printBoards(game* _game){
         }
         
         //separador
-        printf("|"); if (f < 10) printf(" "); printf("%d|", f); //"| 1|"
+        printf("| "); if (f < 10) printf(" "); printf("%d|", f); //"| 1|"
 
         //lado computador
         current = BoardGetTileAt(_game->aiboard, 1, f);
@@ -53,11 +53,15 @@ void printBoards(game* _game){
 }
 
 int main(){
+    printf("-0\n");
     game* g = newGame();
-    
+    printBoards(g);
+    printf("-a\n");
     //debug
     BoardRandomPopulate(g->playerboard);
+    printf("-b\n");
     printBoards(g);
+    printf("-c\n");
     //debug
 
     return EXIT_SUCCESS;

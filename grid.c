@@ -63,10 +63,10 @@ bool tileCheckShip(tile* _t, int _dir){
 
     //se encontrou um corpo #, continuar na direção atual
     else if (_t->data == '#'){
-        if(_dir == 0) return tileCheckNeighbors(_t->up, _dir);
-        else if(_dir == 1) return tileCheckNeighbors(_t->right, _dir);
-        else if(_dir == 2) return tileCheckNeighbors(_t->down, _dir);
-        else if(_dir == 3) return tileCheckNeighbors(_t->left, _dir);
+        if(_dir == 0) return tileCheckShip(_t->up, _dir);
+        else if(_dir == 1) return tileCheckShip(_t->right, _dir);
+        else if(_dir == 2) return tileCheckShip(_t->down, _dir);
+        else if(_dir == 3) return tileCheckShip(_t->left, _dir);
     }
     
     //se nenhum desses casos é valido 
@@ -97,10 +97,10 @@ bool tileCheckShipHit(tile* _t, int _dir){
         else if(_dir == 3 && _t->data == '<') return true;
         
         else if (_t->data == '#'){
-            if(_dir == 0) return tileCheckNeighbors(_t->up, _dir);
-            else if(_dir == 1) return tileCheckNeighbors(_t->right, _dir);
-            else if(_dir == 2) return tileCheckNeighbors(_t->down, _dir);
-            else if(_dir == 3) return tileCheckNeighbors(_t->left, _dir);
+            if(_dir == 0) return tileCheckShipHit(_t->up, _dir);
+            else if(_dir == 1) return tileCheckShipHit(_t->right, _dir);
+            else if(_dir == 2) return tileCheckShipHit(_t->down, _dir);
+            else if(_dir == 3) return tileCheckShipHit(_t->left, _dir);
         } else return false;
     }
 }
@@ -190,7 +190,7 @@ void hitTile(tile* _t){
 }
 
 //funções pra escolher o que mostrar no display
-char* tilePrintDataPlayer(tile* _t){
+char tilePrintDataPlayer(tile* _t){
     if (_t->data == ' '){ //água, atingida ou não
         if (_t->hit) { return 'O'; } else return ' ';
     } 
@@ -199,7 +199,7 @@ char* tilePrintDataPlayer(tile* _t){
     }
     else return _t->data;
 }
-char* tilePrintDataAi(tile* _t){
+char tilePrintDataAi(tile* _t){
     if (_t->data == ' '){ //água, atingida ou não
         if (_t->hit) { return 'O'; } else return ' ';
     } 
@@ -283,13 +283,161 @@ tile* BoardGetTileAt(board* _board, int _x, int _y){
 }
 
 void BoardRandomPopulate(board * _board){
+    printf("-a\n");
     srand(time(NULL));
+    printf("-b\n");
     for(int i = 0; i < 10; i++){
+        printf("-c%d\n", i);
         
-        tile* t = BoardGetTileAt(_board,1+(rand()/12),1+(rand()/12));
+        tile* t = BoardGetTileAt(_board,1+(rand()%12),1+(rand()%12));
         t->data = '#';
-        tile* t = BoardGetTileAt(_board,1+(rand()/12),1+(rand()/12));
+        t = BoardGetTileAt(_board,1+(rand()%12),1+(rand()%12));
         t->data = 'v';
 
+    }
+}
+
+//funções para colocar as embarcações
+//retornam verdadeiro ou falso para interagir com o loop
+//na interface do programa.
+
+//submarino
+bool BoardPlaceSubmarine(board* _board, int _x, int _y){
+    if (_x < 1 || _x > 12) return false;
+    if (_y < 1 || _y > 12) return false;
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+
+    if (_t->data == ' '){
+        _t->data = '@';
+        return true;
+    }
+    else return false;
+}
+
+//jangada
+bool BoardPlaceBoat(board* _board, int _x, int _y){
+    if (_x < 1 || _x > 12) return false;
+    if (_y < 1 || _y > 12) return false;
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+
+    if (_t->data == ' '){
+        _t->data = '&';
+        return true;
+    }
+    else return false;
+}
+
+//fragata
+bool BoardPlaceShip(board* _board, int _x, int _y, char _ori){
+    if (_x < 1 || _x > 12) return false;
+    if (_y < 1 || _y > 12) return false;
+    //orientação, horizontal ou vertical.
+    if (_ori != 'h' && _ori != 'v') return false;
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+    
+    if (_t->data != ' ') return false; //primeiro tile
+    else{
+        tile* _t2;
+        if (_ori == 'h') _t2 = _t->right; 
+        else if (_ori == 'v') _t2 = _t->down;
+
+        if (_t2 == NULL) return false;
+        if (_t2->data != ' ') return false; //segundo tile
+        else{
+            if (_ori == 'h') {
+                _t->data = '<'; _t2->data = '>';
+            }
+            else if (_ori == 'v'){
+                _t->data = '^'; _t2->data = 'v';
+            }
+            return true;
+        }   
+    }
+}
+
+//destroyer
+bool BoardPlaceDestroyer(board* _board, int _x, int _y, char _ori){
+    if (_x < 1 || _x > 12) return false;
+    if (_y < 1 || _y > 12) return false;
+    //orientação, horizontal ou vertical.
+    if (_ori != 'h' && _ori != 'v') return false;
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+    
+    if (_t->data != ' ') return false; //primeiro tile
+    else{
+        tile* _t2;
+        if (_ori == 'h') _t2 = _t->right; 
+        else if (_ori == 'v') _t2 = _t->down;
+
+        if (_t2 == NULL) return false;
+        if (_t2->data != ' ') return false; //segundo tile
+        else{
+            tile* _t3;
+            if (_ori == 'h') _t3 = _t2->right; 
+            else if (_ori == 'v') _t3 = _t2->down;
+
+            if (_t3 == NULL) return false;
+            if (_t3->data != ' ') return false; //terceiro tile
+            else{
+                if (_ori == 'h') {
+                    _t->data = '<';
+                    _t2->data = '#';
+                    _t3->data = '>';
+                }
+                else if (_ori == 'v'){
+                    _t->data = '^';
+                    _t2->data = '#';
+                    _t3->data = 'v';
+                }
+                return true;
+            }  
+        }   
+    }
+}
+
+//porta-avioes
+bool BoardPlaceCarrier(board* _board, int _x, int _y, char _ori){
+    if (_x < 1 || _y < 1) return false;
+    //orientação, horizontal ou vertical.
+    if (_ori != 'h' && _ori != 'v') return false;
+    if (_ori == 'h' && _x > 8) return false; //não cabe
+    if (_ori == 'v' && _y > 8) return false; //não cabe
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+    if (_t->data != ' ') return false;
+    else{
+        tile* _t2; tile* _t3; tile* _t4; tile* _t5;
+        if (_ori == 'h'){
+            _t2 = _t->right; 
+            _t3 = _t2->right;
+            _t4 = _t3->right; 
+            _t5 = _t4->right;
+        } else if (_ori == 'v'){
+            _t2 = _t->down; 
+            _t3 = _t2->down;
+            _t4 = _t3->down; 
+            _t5 = _t4->down;
+        }
+
+        if (_t2->data == ' ' && _t3->data == ' ' 
+            && _t4->data == ' ' && _t5->data == ' '){
+        
+            if (_ori == 'h'){
+                _t->data = '<';                                                             
+                _t5->data = '>';
+            } else if (_ori == 'v'){
+                _t->data = '^';
+                _t5->data = 'v';
+            }
+            _t2->data = '#';
+            _t3->data = '#';
+            _t4->data = '#';
+            
+            return true;
+        }
     }
 }
