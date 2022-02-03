@@ -161,8 +161,8 @@ void posicionando_Embarcacoes(board* _jogador, board* _computador){
     */
 
 
-//enviar tabuleiro pra função
-int efetuar_Disparo(board* _board){
+int efetuar_Disparo(game* _g){
+    board* _board = _g->aiboard; //atirando contra o computador
     char entrada[10];
     int coordenadaX, coordenadaY;
     while(1){
@@ -172,7 +172,7 @@ int efetuar_Disparo(board* _board){
         scanf(" %[A-Z a-z 0-9 ,]", entrada);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
         //no if função pra ver se o lugar já foi disparado ou não, caso tenha sido em um lugar existe e ok, else if, para acerto ou não
-        if(shootTile(_board, coordenadaX, coordenadaY)){
+        if(shootTile(_g, _board, coordenadaX, coordenadaY)){
             break;
         }
         else{

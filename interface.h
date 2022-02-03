@@ -10,6 +10,6 @@ int tratar_String(char* string, int* a, int* b );
 
 void posicionando_Embarcacoes(board* _jogador, board* _computador);
 
-int efetuar_Disparo(struct _Board* _board);
+int efetuar_Disparo(game* _g);
 
 #endif

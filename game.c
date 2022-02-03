@@ -3,21 +3,23 @@
 #include "interface.h"
 #include "ai.h"
 
-//  GAME MANAGER
-//salva os tabuleiros e turnos.
-
-typedef struct _GameManager{
-    bool turn; //true = jogador, false = cpu
-    board* playerboard;
-    board* aiboard;
-} game;
-
-game* newGame(){
-    game* _g = malloc(sizeof(game));
-    _g->turn = true;
-    _g->playerboard = newBoard();
-    _g->aiboard = newBoard();
-    return _g;
+//alternancia de turnos.
+void gameLoop(game* _g){
+    while(1){
+        if (_g->turn){ //vez do humano
+            efetuar_Disparo(_g);
+        } else { //vez da IA
+            efetuar_DisparoIA(_g);
+        }
+        //testar o placar.
+        resultado = testForDefeat(_g);
+        if(resultado!=0){
+            if (resultado==1) printf("Jogador Humano venceu a batalha!\n\n");
+            else printf("Computador venceu a batalha.\n\n");
+            
+            break;
+        }
+    }
 }
 
 //para testes
@@ -30,16 +32,17 @@ int main(){
     //debug
 
     posicionando_EmbarcacoesIA(g->aiboard);
-    
     posicionando_EmbarcacoesIA(g->playerboard); //autocolocar barcos
     //posicionando_Embarcacoes(g->playerboard, g->aiboard);
    
     printf("\nComeca a Batalha Naval!\n\n");
-    while(1){
-        printBoards(g->playerboard, g->aiboard);
-        efetuar_Disparo(g->aiboard);
-        efetuar_DisparoIA(g->playerboard);
-    }
+    gameloop(g);
+    
+    // while(1){
+    //     printBoards(g->playerboard, g->aiboard);
+    //     efetuar_Disparo(g->aiboard);
+    //     efetuar_DisparoIA(g->playerboard);
+    // }
 
     return EXIT_SUCCESS;
 }

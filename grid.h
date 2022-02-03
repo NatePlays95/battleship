@@ -20,25 +20,42 @@ typedef struct _Tile {
     struct _Tile* left;
     struct _Tile* right;
 } tile;
-
 tile* newTile(); //constructor
-
-bool tileCheckShip(tile* _t, int _dir);
-bool tileCheckShipHit(tile* _t, int _dir);
-void tileSinkShip(tile* _t, int _dir);
-
-void hitTile(tile* _t);
-
-char tilePrintDataPlayer(tile* _t);
-char tilePrintDataAi(tile* _t);
 
 //  BOARD
 //board é o tabuleiro, conjunto de tiles
 typedef struct _Board {
     struct _Tile* root; //quadrado A1
 } board;
+board* newBoard(); //constructor
 
-board* newBoard();
+
+//  GAME MANAGER
+//salva os tabuleiros e turnos e outras variaveis 'globais'
+typedef struct _GameManager{
+    bool turn; //true = jogador, false = cpu
+    board* playerboard;
+    board* aiboard;
+    
+    int __count; //conta quantos '#' foram encontrados ao derrubar um navio; para os printfs.
+
+} game;
+game* newGame(); //constructor
+
+
+
+bool tileCheckShip(tile* _t, int _dir);
+bool tileCheckShipHit(tile* _t, int _dir);
+void tileSinkShip(game* _g, tile* _t, int _dir);
+
+void hitTile(game* _g, tile* _t);
+
+char tilePrintDataPlayer(tile* _t);
+char tilePrintDataAi(tile* _t);
+
+
+
+
 
 tile* BoardGetTileAt(board* _board, int _x, int _y);
 void BoardRandomPopulate(board * _board);
@@ -49,7 +66,9 @@ bool BoardPlaceShip(board* _board, int _x, int _y, char _ori);
 bool BoardPlaceDestroyer(board* _board, int _x, int _y, char _ori);
 bool BoardPlaceCarrier(board* _board, int _x, int _y, char _ori);
 
-bool shootTile(board* _board, int _x, int _y);
+bool shootTile(game* _g, board* _board, int _x, int _y);
 void printBoards(board* _player, board* _ai);
+
+int testForDefeat(game* _g);
 
 #endif

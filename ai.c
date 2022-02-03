@@ -82,12 +82,13 @@ void posicionando_EmbarcacoesIA(board* _computador){
 }
 
 //TODO: criar a IA avançada (escolher posições próximas a acertos)
-int efetuar_DisparoIA(board* _board){
+int efetuar_DisparoIA(game* _g){
+    board* _board = _g->playerboard; //atirando contra o humano
     int coordenadaX, coordenadaY;
     while(1){
         coordenadaX = 1+(rand()%12); coordenadaY = 1+(rand()%12);
         //no if função pra ver se o lugar já foi disparado ou não, caso tenha sido em um lugar existe e ok, else if, para acerto ou não
-        if(shootTile(_board, coordenadaX, coordenadaY)){
+        if(shootTile(_g, _board, coordenadaX, coordenadaY)){
             break;
         }
     }

@@ -5,6 +5,6 @@
 
 void posicionando_EmbarcacoesIA(board* _computador);
 
-int efetuar_DisparoIA(board* _board);
+int efetuar_DisparoIA(game* _g);
 
 #endif
