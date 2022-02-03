@@ -40,18 +40,20 @@ int tratar_String(char* string, int* a, int* b ){
 
 //basicamente sequencia de inserções, junto de tratar string, detalhe, sempre "Limpar" as coordenadas e a orientação e o buffer de entrada(ver isso dps)
 //enviar tabuleiro pra funçao
-void posicionando_Embarcacoes(board* _board){
+void posicionando_Embarcacoes(board* _jogador, board* _computador){
     char entrada[10];
     int coordenadaX, coordenadaY, contador = 0;
     char orientacao;
     bool val; //se a jogada é valida ou não
     while(1){
+        
+        printBoards(_jogador,_computador);
+        
         printf("Digite a coordenada da Jangada: ");
         scanf(" %[A-Z a-z 0-9 ,]", entrada);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
-        printf("-%d-%d-", coordenadaX, coordenadaY);
         //If com chamar Função de posicionar Jangada com (X,Y), se a função retornar true, Mensagem, se não, erro
-        val = BoardPlaceBoat(_board, coordenadaX, coordenadaY);
+        val = BoardPlaceBoat(_jogador, coordenadaX, coordenadaY);
         if(val){
             printf("Jangada Posicionada com Sucesso!\n");
             break;
@@ -62,16 +64,19 @@ void posicionando_Embarcacoes(board* _board){
     }
     
     while(contador < 2){
+        
+        printBoards(_jogador,_computador);
+
         coordenadaX, coordenadaY = 0;
         entrada[0] = '\0';
         printf("Digite a coordenada da submarino: ");
         scanf(" %[A-Z a-z 0-9 ,]", entrada);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
         //Mesma coisa da Jangada :/
-        val = BoardPlaceSubmarine(_board, coordenadaX, coordenadaY);
+        val = BoardPlaceSubmarine(_jogador, coordenadaX, coordenadaY);
         if(val){
             printf("submarino Posicionado com Sucesso!\n");
-            break;
+            contador++;
         }
         else{
             printf("Erro. Digite Novamente!");
@@ -80,6 +85,9 @@ void posicionando_Embarcacoes(board* _board){
     contador = 0;
 
     while(contador<3){
+        
+        printBoards(_jogador,_computador);
+        
         coordenadaX, coordenadaY = 0;
         entrada[0] = '\0';
         printf("Digite a coordenada da Fragatas: ");
@@ -88,7 +96,7 @@ void posicionando_Embarcacoes(board* _board){
         scanf(" %c", &orientacao);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
         //If com chamar Função de posicionar fragata com (X,Y, orientacao), se a função retornar true, Mensagem de sucesso, se não, erro
-        val = BoardPlaceShip(_board, coordenadaX, coordenadaY, orientacao);
+        val = BoardPlaceShip(_jogador, coordenadaX, coordenadaY, orientacao);
         if(val){
             printf("Fragata Posicionada com Sucesso!\n");
             contador++;
@@ -99,6 +107,9 @@ void posicionando_Embarcacoes(board* _board){
     }
     contador = 0;
     while(contador<2){
+        
+        printBoards(_jogador,_computador);
+        
         coordenadaX, coordenadaY = 0;
         entrada[0] = '\0';
         printf("Digite a coordenada da Destroyer: ");
@@ -107,7 +118,7 @@ void posicionando_Embarcacoes(board* _board){
         scanf(" %c", &orientacao);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
         //mesmo das fragatas
-        val = BoardPlaceDestroyer(_board, coordenadaX, coordenadaY, orientacao);
+        val = BoardPlaceDestroyer(_jogador, coordenadaX, coordenadaY, orientacao);
         if(val){
             printf("Destroyer Posicionada com Sucesso!\n");
             contador++;
@@ -117,6 +128,9 @@ void posicionando_Embarcacoes(board* _board){
         }
     }
     while(1){
+        
+        printBoards(_jogador,_computador);
+        
         coordenadaX, coordenadaY = 0;
         entrada[0] = '\0';
         printf("Digite a coordenada do Porta-Avioes: ");
@@ -125,7 +139,7 @@ void posicionando_Embarcacoes(board* _board){
         scanf(" %c", &orientacao);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
         //mesmo das fragatas
-        val = BoardPlaceCarrier(_board, coordenadaX, coordenadaY, orientacao);
+        val = BoardPlaceCarrier(_jogador, coordenadaX, coordenadaY, orientacao);
         if(val){
             printf("Porta-Avioes Posicionado com Sucesso!\n");
             break;
@@ -146,7 +160,7 @@ void posicionando_Embarcacoes(board* _board){
                 1 JANGADA (01 CASA)   
     */
 
-//TODO: terminar o disparo
+
 //enviar tabuleiro pra função
 int efetuar_Disparo(board* _board){
     char entrada[10];
@@ -158,18 +172,11 @@ int efetuar_Disparo(board* _board){
         scanf(" %[A-Z a-z 0-9 ,]", entrada);
         tratar_String(entrada, &coordenadaX, &coordenadaY);
         //no if função pra ver se o lugar já foi disparado ou não, caso tenha sido em um lugar existe e ok, else if, para acerto ou não
-        if(1){
-            if(1){
-                printf("disparo acertou algo");
-            }
-            else{
-                printf("disparo errou");
-            }
+        if(shootTile(_board, coordenadaX, coordenadaY)){
             break;
         }
         else{
-            printf("erro");
+            printf("erro\n");
         }
     }
-
 }

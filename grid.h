@@ -23,8 +23,6 @@ typedef struct _Tile {
 
 tile* newTile(); //constructor
 
-void tileChangeData(tile* _tile, char _data);
-
 bool tileCheckShip(tile* _t, int _dir);
 bool tileCheckShipHit(tile* _t, int _dir);
 void tileSinkShip(tile* _t, int _dir);
@@ -50,5 +48,8 @@ bool BoardPlaceSubmarine(board* _board, int _x, int _y);
 bool BoardPlaceShip(board* _board, int _x, int _y, char _ori);
 bool BoardPlaceDestroyer(board* _board, int _x, int _y, char _ori);
 bool BoardPlaceCarrier(board* _board, int _x, int _y, char _ori);
+
+bool shootTile(board* _board, int _x, int _y);
+void printBoards(board* _player, board* _ai);
 
 #endif

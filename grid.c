@@ -18,10 +18,6 @@ tile* newTile(){
     return _t;
 }
 
-//funções
-void tileChangeData(tile* _tile, char _data){
-    _tile->data = _data;
-}
 
 //problema 1:
 //
@@ -107,24 +103,56 @@ bool tileCheckShipHit(tile* _t, int _dir){
 void tileSinkShip(tile* _t, int _dir){
     // (0 = ^)      (1 = >)      (2 = v)      (3 = <)
     if(_t == NULL) return;
+    
     if(!_t->sunk){
-        if (_t->data == '&' || _t->data == '@'){
-            _t->sunk = true;
-            return;
-        } 
-        
-        else if (_t->data == '#'){
-            _t->sunk = true;
-            if(_dir == 0) return tileSinkShip(_t->up, _dir);
-            else if(_dir == 1) return tileSinkShip(_t->right, _dir);
-            else if(_dir == 2) return tileSinkShip(_t->down, _dir);
-            else if(_dir == 3) return tileSinkShip(_t->left, _dir);
-        }
-        
-        else if(_dir == 0 && _t->data == '^') _t->sunk = true;
-        else if(_dir == 2 && _t->data == 'v') _t->sunk = true;
-        else if(_dir == 1 && _t->data == '>') _t->sunk = true;
-        else if(_dir == 3 && _t->data == '<') _t->sunk = true;
+
+    if (_t->data == '&' || _t->data == '@'){
+        _t->sunk = true;
+        return;
+    } 
+    
+    else if (_t->data == '#'){
+        _t->sunk = true;
+        if(_dir == 0) return tileSinkShip(_t->up, _dir);
+        else if(_dir == 1) tileSinkShip(_t->right, _dir);
+        else if(_dir == 2) tileSinkShip(_t->down, _dir);
+        else if(_dir == 3) tileSinkShip(_t->left, _dir);
+    }
+    
+    else if(_dir == 0 && _t->data == '^') {
+        _t->sunk = true; return;
+    }
+    else if(_dir == 2 && _t->data == 'v') {
+        _t->sunk = true; return;
+    }
+    else if(_dir == 1 && _t->data == '>') {
+        _t->sunk = true; return;
+    }
+    else if(_dir == 3 && _t->data == '<') { 
+        _t->sunk = true; return;
+    }
+
+    // else if(_dir == 2 && _t->data == '^') {
+    //     _t->sunk = true; 
+    //     tileSinkShip(_t->down, _dir);
+    //     return;
+    // }
+    // else if(_dir == 0 && _t->data == 'v') {
+    //     _t->sunk = true;
+    //     tileSinkShip(_t->up, _dir);
+    //     return;
+    // }
+    // else if(_dir == 3 && _t->data == '>') {
+    //     _t->sunk = true; 
+    //     tileSinkShip(_t->left, _dir);
+    //     return;
+    // }
+    // else if(_dir == 1 && _t->data == '<') { 
+    //     _t->sunk = true;
+    //     tileSinkShip(_t->right, _dir);
+    //     return;
+    // }
+
     }
 }
 
@@ -132,6 +160,11 @@ void tileSinkShip(tile* _t, int _dir){
 void hitTile(tile* _t){
     _t->hit = true;
     char _d = _t->data; 
+
+    //mensagem
+    if(_d == ' ') printf("Disparo errou.\n");
+    else printf("Disparo acertou algo!\n");
+
 
     //agua, jangadas e submarinos são simples
     if (_d == ' ') return;
@@ -141,25 +174,33 @@ void hitTile(tile* _t){
 
     // (0 = ^)      (1 = >)      (2 = v)      (3 = <)
     else if (_d == 'v') {
-        if (tileCheckShipHit(_t, 0) == true){
+        if (tileCheckShipHit(_t->up, 0) == true){
+            printf("BOOOM");
+            _t->sunk = true;
             tileSinkShip(_t->up, 0); 
             return ;
         }   
     }
     else if (_d == '<') {
-        if (tileCheckShipHit(_t, 1)){
+        if (tileCheckShipHit(_t->right, 1)){
+            printf("BOOOoooM");
+            _t->sunk = true;
             tileSinkShip(_t->right, 1); 
             return;
         }
     }
     else if (_d == '^') {
-        if (tileCheckShipHit(_t, 2)){
+        if (tileCheckShipHit(_t->down, 2)){
+            printf("BoooOOOM");
+            _t->sunk = true;
             tileSinkShip(_t->down, 2); 
             return;
         }
     }
     else if (_d == '>') {
-        if (tileCheckShipHit(_t, 3)){
+        if (tileCheckShipHit(_t->left, 3)){
+            printf("BO0000OOM");
+            _t->sunk = true;
             tileSinkShip(_t->left, 3); 
             return;
         }
@@ -173,14 +214,15 @@ void hitTile(tile* _t){
         if (tileCheckShip(_t, 1) && tileCheckShip(_t, 3)) _orientation = 1;
         //teste vertical
         if (tileCheckShip(_t, 0) && tileCheckShip(_t, 2)) _orientation = 2;
+        printf("orientação: %d", _orientation); //debug
 
         if (_orientation == 1){
             if (tileCheckShipHit(_t, 1) && tileCheckShipHit(_t, 3)){
-                tileSinkShip(_t->left, 3); tileSinkShip(_t->right, 1);
+                tileSinkShip(_t, 3); tileSinkShip(_t, 1);
             }
         } else if (_orientation == 2) {
             if (tileCheckShipHit(_t, 0) && tileCheckShipHit(_t, 2)){
-                tileSinkShip(_t->up, 0); tileSinkShip(_t->down, 2);
+                tileSinkShip(_t, 0); tileSinkShip(_t, 2);
             }
         }
         return;
@@ -194,6 +236,13 @@ char tilePrintDataPlayer(tile* _t){
     if (_t->data == ' '){ //água, atingida ou não
         if (_t->hit) { return 'O'; } else return ' ';
     } 
+
+    //debug
+    else if (_t->sunk) {
+        return 'X';
+    }
+
+
     else if (_t->hit) { //navios derrubados são atingidos tambem
         return '*';
     }
@@ -331,10 +380,10 @@ bool BoardPlaceBoat(board* _board, int _x, int _y){
 
 //fragata
 bool BoardPlaceShip(board* _board, int _x, int _y, char _ori){
-    if (_x < 1 || _x > 12) return false;
-    if (_y < 1 || _y > 12) return false;
     //orientação, horizontal ou vertical.
     if (_ori != 'h' && _ori != 'v') return false;
+    if (_ori == 'h' && _x > 11) return false; //não cabe
+    if (_ori == 'v' && _y > 11) return false; //não cabe
 
     tile* _t = BoardGetTileAt(_board, _x, _y);
     
@@ -360,10 +409,10 @@ bool BoardPlaceShip(board* _board, int _x, int _y, char _ori){
 
 //destroyer
 bool BoardPlaceDestroyer(board* _board, int _x, int _y, char _ori){
-    if (_x < 1 || _x > 12) return false;
-    if (_y < 1 || _y > 12) return false;
     //orientação, horizontal ou vertical.
     if (_ori != 'h' && _ori != 'v') return false;
+    if (_ori == 'h' && _x > 10) return false; //não cabe
+    if (_ori == 'v' && _y > 10) return false; //não cabe
 
     tile* _t = BoardGetTileAt(_board, _x, _y);
     
@@ -439,5 +488,54 @@ bool BoardPlaceCarrier(board* _board, int _x, int _y, char _ori){
             
             return true;
         }
+        else return false;
     }
+}
+
+//função para -tentar- atirar numa posição do tabuleiro
+bool shootTile(board* _board, int _x, int _y){
+    if (_x < 1 || _x > 12) return false;
+    if (_y < 1 || _y > 12) return false;
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+
+    //não atirar no tile se já atirou antes.
+    if (_t->hit) return false;
+    else{
+        hitTile(_t);
+        return true;
+    }
+}
+
+void printBoards(board* _player, board* _ai){
+    printf("      Humano         Computador  \n");
+    printf("   ABCDEFGHIJKL     ABCDEFGHIJKL \n");
+    printf("  +------------+   +------------+\n");
+    
+    //template da fileira: printf(" 1|            |  1|            |\n");
+    //printar cada fileira
+    for(int f = 1; f <= 12; f++){
+        //separador
+        if (f < 10) printf(" "); printf("%d|", f); //" 1|"
+
+        //lado humano
+        tile* current = BoardGetTileAt(_player, 1, f);
+        for(int x = 1; x <= 12; x++){
+            printf("%c", tilePrintDataPlayer(current));
+            current = current->right;
+        }
+        
+        //separador
+        printf("| "); if (f < 10) printf(" "); printf("%d|", f); //"| 1|"
+
+        //lado computador
+        current = BoardGetTileAt(_ai, 1, f);
+        for(int x = 1; x <= 12; x++){
+            printf("%c", tilePrintDataPlayer(current)); //debug: mostrar a ia
+            //printf("%c", tilePrintDataAi(current));
+            current = current->right;
+        }
+        printf("|\n");
+    }
+    printf("  +------------+   +------------+\n");
 }

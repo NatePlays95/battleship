@@ -1,5 +1,5 @@
-#ifndef INTER_GRID
-#define INTER_GRID
+#ifndef HEADER_INTER
+#define HEADER_INTER
 //incluir uma vez
 
 //#include <stdio.h>
@@ -8,7 +8,7 @@
 
 int tratar_String(char* string, int* a, int* b );
 
-void posicionando_Embarcacoes(struct _Board* _board);
+void posicionando_Embarcacoes(board* _jogador, board* _computador);
 
 int efetuar_Disparo(struct _Board* _board);
 

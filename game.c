@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "grid.h"
 #include "interface.h"
+#include "ai.h"
 
 //  GAME MANAGER
 //salva os tabuleiros e turnos.
@@ -19,49 +20,26 @@ game* newGame(){
     return _g;
 }
 
-void printBoards(game* _game){
-    printf("      Humano         Computador  \n");
-    printf("   ABCDEFGHIJKL     ABCDEFGHIJKL \n");
-    printf("  +------------+   +------------+\n");
-    
-    //template da fileira: printf(" 1|            |  1|            |\n");
-    //printar cada fileira
-    for(int f = 1; f <= 12; f++){
-        //separador
-        if (f < 10) printf(" "); printf("%d|", f); //" 1|"
-
-        //lado humano
-        tile* current = BoardGetTileAt(_game->playerboard, 1, f);
-        for(int x = 1; x <= 12; x++){
-            printf("%c", tilePrintDataPlayer(current));
-            current = current->right;
-        }
-        
-        //separador
-        printf("| "); if (f < 10) printf(" "); printf("%d|", f); //"| 1|"
-
-        //lado computador
-        current = BoardGetTileAt(_game->aiboard, 1, f);
-        for(int x = 1; x <= 12; x++){
-            printf("%c", tilePrintDataAi(current));
-            current = current->right;
-        }
-        printf("|\n");
-    }
-    printf("  +------------+   +------------+\n");
-}
-
-
 //para testes
 int main(){
+    srand(time(NULL));
     game* g = newGame();
-    //debug
-    BoardRandomPopulate(g->aiboard);
-    printBoards(g);
 
-    posicionando_Embarcacoes(g->playerboard);
-    printBoards(g);
     //debug
+    //BoardRandomPopulate(g->aiboard);
+    //debug
+
+    posicionando_EmbarcacoesIA(g->aiboard);
+    
+    posicionando_EmbarcacoesIA(g->playerboard); //autocolocar barcos
+    //posicionando_Embarcacoes(g->playerboard, g->aiboard);
+   
+    printf("\nComeca a Batalha Naval!\n\n");
+    while(1){
+        printBoards(g->playerboard, g->aiboard);
+        efetuar_Disparo(g->aiboard);
+        efetuar_DisparoIA(g->playerboard);
+    }
 
     return EXIT_SUCCESS;
 }
