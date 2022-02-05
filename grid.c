@@ -110,7 +110,8 @@ void tileSinkShip(game* _g, tile* _t, int _dir){
         if (_t->data == '&'){
             _t->sunk = true;
             //TODO: mensagem de derrubar jangada
-            //removeSubmarine(_g->turn);
+            printf("Afundou uma jangada.\n");
+            removeSubmarine(_g);
             _g->turn = !(_g->turn); //passar o turno.
 
             return; 
@@ -119,6 +120,7 @@ void tileSinkShip(game* _g, tile* _t, int _dir){
         if (_t->data == '@'){
             _t->sunk = true;
             //TODO: mensagem de derrubar submarino
+            printf("Afundou um submarino.\n");
             return;
         } 
         
@@ -545,6 +547,55 @@ game* newGame(){
     _g->aiboard = newBoard();
     _g->__count = 0;
     return _g;
+}
+
+bool removeSubmarine(game* _g){
+    board* b;
+    if (_g->turn){
+        b = _g->playerboard;
+    } else {
+        b = _g->aiboard;
+    }
+
+    tile* sub1 = NULL; tile* sub2 = NULL; tile* sub3 = NULL; //existem 3 submarinos
+    //pegar os 3 submarinos
+    tile* current;
+    for(int x = 1; x <= 12; x++){
+        for(int y = 1; y <= 12; y++){
+            current = BoardGetTileAt(b, x, y);
+            if (current->data == '@' && !current->sunk){
+                if (sub1 == NULL) sub1 = current;
+                else if (sub2 == NULL) sub2 = current;
+                else sub3 = current;
+            }
+        }
+    }
+    //escolher um submarino para afundar.
+    if (sub1 != NULL){
+        while(1){
+            int random = 1+ rand()%3;
+
+            if (random == 1){
+                if (sub1 == NULL) continue;
+                else {
+                    hitTile(_g, sub1);
+                    break;
+                }
+            } else if (random == 2){
+                if (sub2 == NULL) continue;
+                else {
+                    hitTile(_g, sub2);
+                    break;
+                }
+            } else if (random == 3){
+                if (sub3 == NULL) continue;
+                else {
+                    hitTile(_g, sub3);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 int testForDefeat(game* _g){ 

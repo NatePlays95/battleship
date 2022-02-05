@@ -70,5 +70,5 @@ bool shootTile(game* _g, board* _board, int _x, int _y);
 void printBoards(board* _player, board* _ai);
 
 int testForDefeat(game* _g);
-
+bool removeSubmarine(game* _g);
 #endif
