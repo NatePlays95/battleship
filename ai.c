@@ -62,7 +62,7 @@ void posicionando_EmbarcacoesIA(board* _computador){
     
     int tentativas = 1;
     while(1){
-        printf("tent %d; ",tentativas);
+        //printf("tent %d; ",tentativas);
         //computador escolhe posições aleatórias
         coordenadaX = 1+(rand()%12); coordenadaY = 1+(rand()%12);
         //orientação também aleatória

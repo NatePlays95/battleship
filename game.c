@@ -1,3 +1,6 @@
+// 510613 - Murilo Vinicius 
+// 511800 - Natan Maia 
+
 #include <stdio.h>
 #include "grid.h"
 #include "interface.h"
@@ -17,8 +20,8 @@ void gameLoop(game* _g){
         //testar o placar.
         int resultado = testForDefeat(_g);
         if(resultado!=0){
-            if (resultado==1) printf("Jogador Humano venceu a batalha!\n\n");
-            else printf("Computador venceu a batalha.\n\n");
+            if (resultado==1) printf("Computador venceu a batalha.\n\n");
+            else printf("Jogador Humano venceu a batalha!\n\n");
             
             break;
         }

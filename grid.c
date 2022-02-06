@@ -100,6 +100,21 @@ bool tileCheckShipHit(tile* _t, int _dir){
         } else return false;
     }
 }
+
+void sinkShipMessage(game* _g){
+    //count salva quantos # a função encontrou.
+    // >2 = porta avioes
+    // >0 = destroyer
+    //  0 = fragata
+    if (_g->__count > 2){
+        printf("Afundou um Porta Avioes.\n");
+    } else if (_g->__count > 0){
+        printf("Afundou um Destroyer.\n");
+    } else {
+        printf("Afundou uma Fragata.\n");
+    }
+    _g->__count = 0;
+}
 void tileSinkShip(game* _g, tile* _t, int _dir){
     // (0 = ^)      (1 = >)      (2 = v)      (3 = <)
     if(_t == NULL) return;
@@ -109,7 +124,6 @@ void tileSinkShip(game* _g, tile* _t, int _dir){
         //punir o jogador por atirar em uma jangada
         if (_t->data == '&'){
             _t->sunk = true;
-            //TODO: mensagem de derrubar jangada
             printf("Afundou uma jangada.\n");
             removeSubmarine(_g);
             _g->turn = !(_g->turn); //passar o turno.
@@ -119,7 +133,6 @@ void tileSinkShip(game* _g, tile* _t, int _dir){
 
         if (_t->data == '@'){
             _t->sunk = true;
-            //TODO: mensagem de derrubar submarino
             printf("Afundou um submarino.\n");
             return;
         } 
@@ -134,25 +147,43 @@ void tileSinkShip(game* _g, tile* _t, int _dir){
         }
         
         else if(_dir == 0 && _t->data == '^') {
-            _t->sunk = true; //TODO: mensagem de derrubar navio maior
+            _t->sunk = true; 
+            sinkShipMessage(_g);
             return;
         }
         else if(_dir == 2 && _t->data == 'v') {
-            _t->sunk = true; //TODO: mensagem de derrubar navio maior
+            _t->sunk = true; 
+            sinkShipMessage(_g);
             return;
         }
         else if(_dir == 1 && _t->data == '>') {
-            _t->sunk = true; //TODO: mensagem de derrubar navio maior
+            _t->sunk = true; 
+            sinkShipMessage(_g);
             return;
         }
         else if(_dir == 3 && _t->data == '<') { 
-            _t->sunk = true; //TODO: mensagem de derrubar navio maior
+            _t->sunk = true; 
+            sinkShipMessage(_g);
             return;
         }
 
     }
 }
 
+//função para -tentar- atirar numa posição do tabuleiro
+bool shootTile(game* _g, board* _board, int _x, int _y){
+    if (_x < 1 || _x > 12) return false;
+    if (_y < 1 || _y > 12) return false;
+
+    tile* _t = BoardGetTileAt(_board, _x, _y);
+
+    //não atirar no tile se já atirou antes.
+    if (_t->hit) return false;
+    else{
+        hitTile(_g, _t);
+        return true;
+    }
+}
 //função para quando se atira num quadrado do tabuleiro.
 void hitTile(game* _g, tile* _t){
     _g->__count = 0; //definir qual barco grande foi atingido
@@ -160,7 +191,7 @@ void hitTile(game* _g, tile* _t){
     _t->hit = true;
     char _d = _t->data; 
 
-    //mensagem
+    //agua
     if(_d == ' '){
         printf("Disparo errou.\n");
         _g->turn = !(_g->turn); //passar o turno.
@@ -238,9 +269,8 @@ char tilePrintDataPlayer(tile* _t){
         if (_t->hit) { return 'O'; } else return ' ';
     } 
 
-    //debug
     else if (_t->sunk) {
-        return 'X';
+        return '*';
     }
 
 
@@ -489,20 +519,7 @@ bool BoardPlaceCarrier(board* _board, int _x, int _y, char _ori){
     }
 }
 
-//função para -tentar- atirar numa posição do tabuleiro
-bool shootTile(game* _g, board* _board, int _x, int _y){
-    if (_x < 1 || _x > 12) return false;
-    if (_y < 1 || _y > 12) return false;
 
-    tile* _t = BoardGetTileAt(_board, _x, _y);
-
-    //não atirar no tile se já atirou antes.
-    if (_t->hit) return false;
-    else{
-        hitTile(_g, _t);
-        return true;
-    }
-}
 
 void printBoards(board* _player, board* _ai){
     printf("      Humano         Computador  \n");
@@ -557,8 +574,8 @@ bool removeSubmarine(game* _g){
         b = _g->aiboard;
     }
 
-    tile* sub1 = NULL; tile* sub2 = NULL; tile* sub3 = NULL; //existem 3 submarinos
-    //pegar os 3 submarinos
+    tile* sub1 = NULL; tile* sub2 = NULL; //existem 2 submarinos
+    //pegar os 2 submarinos
     tile* current;
     for(int x = 1; x <= 12; x++){
         for(int y = 1; y <= 12; y++){
@@ -566,31 +583,24 @@ bool removeSubmarine(game* _g){
             if (current->data == '@' && !current->sunk){
                 if (sub1 == NULL) sub1 = current;
                 else if (sub2 == NULL) sub2 = current;
-                else sub3 = current;
             }
         }
     }
     //escolher um submarino para afundar.
     if (sub1 != NULL){
         while(1){
-            int random = 1+ rand()%3;
+            int random = 1+ rand()%2;
 
-            if (random == 1){
+            if (random == 0){
                 if (sub1 == NULL) continue;
                 else {
                     hitTile(_g, sub1);
                     break;
                 }
-            } else if (random == 2){
+            } else {
                 if (sub2 == NULL) continue;
                 else {
                     hitTile(_g, sub2);
-                    break;
-                }
-            } else if (random == 3){
-                if (sub3 == NULL) continue;
-                else {
-                    hitTile(_g, sub3);
                     break;
                 }
             }
@@ -620,7 +630,7 @@ int testForDefeat(game* _g){
         currentX = currentX->right;
     }
     //2x1 + 3x2 + 2x3 + 1x5 = 19 pontos quando se afunda todos os barcos.
-    if (naviosHumano >= 19) return 1; //humanho ganhou
+    if (naviosHumano >= 19) return 1; //computador ganhou
 
     //lado computador
     currentX = _g->aiboard->root;
@@ -634,6 +644,6 @@ int testForDefeat(game* _g){
         }
         currentX = currentX->right;
     }
-    if (naviosComput >= 19) return 2; //computador ganhou
+    if (naviosComput >= 19) return 2; //humano ganhou
     return 0;
 }
