@@ -176,7 +176,7 @@ int efetuar_Disparo(game* _g){
             break;
         }
         else{
-            printf("erro\n");
+            printf("Erro. Digite Novamente!\n");
         }
     }
 }

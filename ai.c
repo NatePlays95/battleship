@@ -13,7 +13,7 @@ void posicionando_EmbarcacoesIA(board* _computador){
         //If com chamar Função de posicionar Jangada com (X,Y), se a função retornar true, Mensagem, se não, erro
         val = BoardPlaceBoat(_computador, coordenadaX, coordenadaY);
         if(val){
-            printf("Jangada Posicionada em %d-%d!\n", coordenadaX, coordenadaY);
+            //printf("Jangada Posicionada em %d-%d!\n", coordenadaX, coordenadaY);
             break;
         }
     }
@@ -25,7 +25,7 @@ void posicionando_EmbarcacoesIA(board* _computador){
         //Mesma coisa da Jangada :/
         val = BoardPlaceSubmarine(_computador, coordenadaX, coordenadaY);
         if(val){
-            printf("submarino Posicionado em %d-%d!\n", coordenadaX, coordenadaY);
+            //printf("submarino Posicionado em %d-%d!\n", coordenadaX, coordenadaY);
             contador++;
         }
 
@@ -41,7 +41,7 @@ void posicionando_EmbarcacoesIA(board* _computador){
         //If com chamar Função de posicionar fragata com (X,Y, orientacao), se a função retornar true, Mensagem de sucesso, se não, erro
         val = BoardPlaceShip(_computador, coordenadaX, coordenadaY, orientacao);
         if(val){
-            printf("Fragata Posicionada em %d-%d!\n", coordenadaX, coordenadaY);
+            //printf("Fragata Posicionada em %d-%d!\n", coordenadaX, coordenadaY);
             contador++;
         }
     }
@@ -55,7 +55,7 @@ void posicionando_EmbarcacoesIA(board* _computador){
         //mesmo das fragatas
         val = BoardPlaceDestroyer(_computador, coordenadaX, coordenadaY, orientacao);
         if(val){
-            printf("Destroyer Posicionada em %d-%d!\n", coordenadaX, coordenadaY);
+            //printf("Destroyer Posicionada em %d-%d!\n", coordenadaX, coordenadaY);
             contador++;
         }
     }
@@ -71,7 +71,7 @@ void posicionando_EmbarcacoesIA(board* _computador){
         //mesmo das fragatas
         val = BoardPlaceCarrier(_computador, coordenadaX, coordenadaY, orientacao);
         if(val){
-            printf("Porta-Avioes Posicionado em %d-%d!\n", coordenadaX, coordenadaY);
+            //printf("Porta-Avioes Posicionado em %d-%d!\n", coordenadaX, coordenadaY);
             break;
         }
         else {

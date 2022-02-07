@@ -33,22 +33,13 @@ int main(){
     srand(time(NULL));
     game* g = newGame();
 
-    //debug
-    //BoardRandomPopulate(g->aiboard);
-    //debug
-
     posicionando_EmbarcacoesIA(g->aiboard);
     posicionando_EmbarcacoesIA(g->playerboard); //autocolocar barcos
-    //posicionando_Embarcacoes(g->playerboard, g->aiboard);
+    //posicionando_Embarcacoes(g->playerboard, g->aiboard); //jogador coloca os barcos
    
     printf("\nComeca a Batalha Naval!\n\n");
     gameLoop(g);
     
-    // while(1){
-    //     printBoards(g->playerboard, g->aiboard);
-    //     efetuar_Disparo(g->aiboard);
-    //     efetuar_DisparoIA(g->playerboard);
-    // }
 
     return EXIT_SUCCESS;
 }
